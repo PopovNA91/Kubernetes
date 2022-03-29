@@ -1,0 +1,10 @@
+---
+apiVersion: apps/v1
+kind: Namespace
+metadata:
+  name: stage
+---
+apiVersion: apps/v1
+kind: Namespace
+metadata:
+  name: prod
