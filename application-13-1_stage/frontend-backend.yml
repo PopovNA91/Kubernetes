@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-back
+  labels:
+    app: frontback
+  namespace: stage
+spec:
+  selector:
+    matchLabels:
+      app: frontback
+  template:
+    metadata:
+      labels:
+        app: frontback
+    spec:
+      containers:
+      - name: frontend
+        image: popovna/app-frontend
+        ports:
+        - containerPort: 80
+        env:
+        - name: BASE_URL
+          value: http://localhost:9000
+      - name: backend
+        image: popovna/app-backend
+        ports:
+        - containerPort: 9000
+        env:
+        - name: DATABASE_URL
+          value: postgres://postgres:postgres@postgres:5432/news
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontback-svc
+  namespace: stage
+spec:
+  selector:
+    app: frontback
+  ports:
+  - name: front
+    port: 8000
+    targetPort: 80
+  - name: back
+    port: 9000
+    targetPort: 9000
