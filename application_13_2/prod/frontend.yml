@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+  namespace: prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend-prod
+        image: popovna/app-frontend
+        ports:
+        - containerPort: 80
+        env:
+        - name: BASE_URL
+          value: http://localhost:9000
+        volumeMounts:
+        - name: share
+          mountPath: /static
+    volumes:
+    - name: share
+      persistentVolumeClaim:
+        claimName: share-volume-claim 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-svc
+  labels:
+    app: frontend
+  namespace: prod
+spec:
+  selector:
+    app: frontend
+  ports:
+  - name: front
+    port: 8000
+    targetPort: 80
